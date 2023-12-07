@@ -6,6 +6,10 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
+import VerificationModal from './VerificationModal';
+import { Badge } from '@mui/material';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 // import { PropaneSharp } from '@mui/icons-material';
 
 const bull = (
@@ -80,13 +84,16 @@ export default function AccountDetails(props:Details) {
             Account status:  <Chip label="Healthy" color="success" variant="outlined" />
             </Typography>
             </CardContent>
+            <p>Verification status: <span></span>
+            <Badge >
+            Success<VerifiedIcon color="success"/>
+            {/* success or pending after verification */}
+            Pending<MoreHorizIcon/>
+            </Badge> 
+            </p>
+            <VerificationModal/>
 
-
-            <CardActions>
-            <Button size="small">Verify Your ID</Button>
-            </CardActions>
         </React.Fragment>
-      {/* <Card variant="outlined">{card}</Card> */}
     </Box>
   );
 }
