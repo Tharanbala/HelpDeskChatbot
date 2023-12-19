@@ -1,29 +1,68 @@
 import * as React from 'react';
+import { useRef } from 'react';
 import clsx from 'clsx';
 import { styled, css } from '@mui/system';
 import { Modal as BaseModal } from '@mui/base/Modal';
 import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import { Badge } from '@mui/material';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import dayjs, { Dayjs } from 'dayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import axios from "axios";
+
+
 
 export default function VerificationModal() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [dob, setDOB] = React.useState<Dayjs | null>(dayjs('2022-04-17'));
+  const [epanther, setePanther] = React.useState<string>();
+  const [ssn, setSSN] = React.useState<any>();
+  const [address, setAddress] = React.useState<string>();
+  const [verify, setVerify] = React.useState(false);
+  
+
+  const getverified = (value: any) => {
+    const DOB = dob?.toDate();
+    const baseURL = "http://127.0.0.1:5000/verify?epanther=" + epanther + "&ssn=" + ssn + "&address=" + address + "&dob=" + DOB  ;
+    
+    axios.get(baseURL).then((response) => {
+      console.log(response.data);
+      if(response.data.status == "Healthy") {
+        setVerify(true);
+        setOpen(false);
+      }
+      else if(response.data.status == "Unhealthy, recheck entered data"){
+        setVerify(false);
+        setOpen(false);
+      }
+      else{
+        setVerify(false);
+        setOpen(false);
+      }  
+    }
+    )
+  };
   const [value, setValue] = React.useState<Dayjs | null>(dayjs('2022-04-17'));
 
   return (
     <div>
+    <p>Verification status:
+        {verify ? <span>{'\t'}Success <VerifiedIcon color="success"/></span> : <span>{'\t'}pending <MoreHorizIcon/></span> } 
+    </p>
     <CardActions>
         <Button size="small" onClick={handleOpen}>
             Verify Your ID
         </Button>
     </CardActions>
+
 
       <Modal
         aria-labelledby="unstyled-modal-title"
@@ -40,34 +79,41 @@ export default function VerificationModal() {
           required
           id="outlined-required"
           label="ePanther"
+          onChange={e => setePanther(e.target.value)}
           />
         <TextField
           id="outlined-password-input"
           label="Last 4 digits of SSN"
           type="password"
+          onChange={e => setSSN(e.target.value)}
         />
         <TextField required
           id="outlined-multiline-static"
           label="Home Address"
           multiline
           rows={4}
+          onChange={e => setAddress(e.target.value)}
         />
 
         <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker 
         label="Date of Birth"
-        value={value}
-        onChange={(newValue: any) => setValue(newValue)}
+        value={dob}
+        onChange={(newValue: any) => setDOB(newValue)}
         />
     </LocalizationProvider>
   
 
   
-    <Button variant="contained">Submit</Button>
+    <Button variant="contained" onClick={(e: React.MouseEvent<HTMLElement>) => getverified(e.target)}>Submit</Button>
         </ModalContent>
       </Modal>
     </div>
   );
+}
+
+export function Verification(){
+  return VerificationModal;
 }
 
 const Backdrop = React.forwardRef<

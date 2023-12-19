@@ -3,6 +3,8 @@ from flask_cors import CORS
 from flask_pymongo import PyMongo
 import json
 from bson import json_util
+import os
+import time
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "471125e7d4a5442adfe176401d43e5adb6fa1cbf"
@@ -11,6 +13,10 @@ CORS(app)
 
 mongodb_client = PyMongo(app)
 db = mongodb_client.db
+
+def format_server_time():
+  server_time = time.localtime()
+  return time.strftime("%I:%M:%S %p", server_time)
 
 @app.route("/get", methods=["GET"])
 def get():
@@ -64,18 +70,23 @@ def update():
 def verify():
     epanther = request.args.get('epanther')
     ssn = request.args.get('ssn')
-    phone_number = request.args.get('mobile')
+    dob = request.args.get('dob')
     address = request.args.get('address')
     if epanther:
         response = db.hd_users.find_one({'epanther': epanther})
-        if ssn and phone_number and address:
-            if response['SSN'] == int(ssn) and response['phone_number'] == int(phone_number) and response['address'] == address:
+        if ssn and dob and address:
+            if response['SSN'] == int(ssn) and response['dob'] == dob and response['address'] == address:
                 result = {"status": "Healthy"}, 200
-            elif response['SSN'] == int(ssn) or response['phone_number'] == int(phone_number) or response['address'] == address:
-                result = {"status": "Unhealthy, recheck entered data"}, 400
+            elif response['SSN'] == int(ssn) or response['dob'] == dob or response['address'] == address:
+                result = {"status": "Unhealthy, recheck entered data"}, 200
             else:
-                result = {"status": "Wrong Information"}, 500
+                result = {"status": "Wrong Information"}, 200
     return result
+ 
+@app.route('/')
+def index():
+    context = { 'server_time': format_server_time() }
+    return render_template('index.html', context=context)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,host='0.0.0.0',port=int(os.environ.get('PORT', 8080)))

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Chats.css";
+import verify from './VerificationModal';
 
 interface Props {
   userResponse: string;
@@ -32,7 +33,7 @@ const Chats: React.FC<Props> = props => {
         {
           purpose: "introduction",
           message:
-            "Hi there. If you're here, that means you're looking for a job. Tell me, what's your name?",
+            "Hi there. If you're here, that means you're looking for a MFA/SSPR update on your account. Tell me, what's your name?",
           sender: "bot"
         }
       ]);
@@ -48,6 +49,19 @@ const Chats: React.FC<Props> = props => {
       }, 1000);
     }
   }, [props.sendUserResponse, props.botResponse]);
+// Get the verifyRef from the VerificationModal
+
+    const verifystatus:any = verify;
+    console.log(verify,"sdfs")
+  useEffect(() => {
+    // Check if verifyRef is true or false
+
+    if (verifystatus) {
+      console.log('Verification is true');
+    } else {
+      console.log('Verification is false');
+    }
+  },[props.sendUserResponse,verifystatus]);
 
   // enable autoscroll after each message
   useEffect(() => {

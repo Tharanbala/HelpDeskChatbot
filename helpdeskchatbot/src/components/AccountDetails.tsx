@@ -50,7 +50,7 @@ const bull = (
 //     </CardActions>
 //   </React.Fragment>
 // );
-interface Details {
+export interface Details {
     campusid: number|undefined;
     email_address: string |undefined;
     epanther: string|undefined;
@@ -84,13 +84,6 @@ export default function AccountDetails(props:Details) {
             Account status:  <Chip label="Healthy" color="success" variant="outlined" />
             </Typography>
             </CardContent>
-            <p>Verification status: <span></span>
-            <Badge >
-            Success<VerifiedIcon color="success"/>
-            {/* success or pending after verification */}
-            Pending<MoreHorizIcon/>
-            </Badge> 
-            </p>
             <VerificationModal/>
 
         </React.Fragment>

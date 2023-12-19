@@ -1,6 +1,6 @@
 .App {
   display: flex;
-  flex-flow: column wrap;
+  flex-flow: row wrap;
 }
 
 .App-logo {
@@ -35,4 +35,13 @@
   margin-left: 3%;
   margin-top: 1%;
   max-width: 40%;
+}
+
+.chatbot{
+  flex-direction: row;
+  margin-left: 3%;
+  margin-right: 10%;
+  padding-right: 30px;
+  margin-top: 3%;
+  max-width: 30%;
 }

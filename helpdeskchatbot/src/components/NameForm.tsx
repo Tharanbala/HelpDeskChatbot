@@ -3,6 +3,10 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useState } from "react";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs, { Dayjs } from 'dayjs';
 import axios from "axios";
 // import FormContainer from 'react-hook-form-mui'
 // import e from 'cors';
@@ -19,13 +23,15 @@ import AccountDetails from './AccountDetails';
 export default function NameForm(): JSX.Element {
   const [firstName, setFirstName] = useState<string>();
   const [lastName, setLastName] = useState<string>();
-  const [dob, setDOB] = useState<string>();
+  const [dob, setDOB] = React.useState<Dayjs | null>(dayjs('2022-12-17'));
   const [userDetails, setUserDetails] = useState<any>("");
 
   const getdetails = (value: any) => {
     console.log(value);
     console.log(firstName, lastName, dob);
-    const baseURL = "http://127.0.0.1:5000/get?FirstName=" + firstName + "&LastName=" + lastName + "&dob=" + dob;
+    const DOB = dob?.toDate();
+
+    const baseURL = "http://127.0.0.1:5000/get?FirstName=" + firstName + "&LastName=" + lastName + "&dob=" + DOB;
     
     
     console.log(baseURL);
@@ -57,12 +63,19 @@ export default function NameForm(): JSX.Element {
         label="Last Name"
         onChange={e => setLastName(e.target.value)}
       />
-      <TextField
+      {/* <TextField
         required
         id="outlined-required"
         label="Date Of Birth"
         onChange={e => setDOB(e.target.value)}
-      />
+      /> */}
+         <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DatePicker 
+        label="Date of Birth"
+        value={dob}
+        onChange={(newValue: any) => setDOB(newValue)}
+        />
+    </LocalizationProvider>
     </Box>
     <p> {userDetails?.first_name}</p>
     <Button sx={{ m: 1, minWidth: 100 }} variant="outlined" onClick={(e: React.MouseEvent<HTMLElement>) => getdetails(e.target)}>Submit</Button>
