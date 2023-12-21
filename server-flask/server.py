@@ -16,7 +16,7 @@ db = mongodb_client.db
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('hello.html')
 
 @app.route("/get", methods=["GET"])
 def get():
